@@ -1,19 +1,26 @@
 const express = require('express')
-const bodyParce = require('body-parser')
 const cors = require('cors')
 const mogoose =require('mongoose')
 const morgan = require('morgan')
 
 const app = express();
-
-//Rotas
-
 const index = require('./routes/index')
-//TODO
 
-app.use(bodyParce.urlencoded({extended: true}))
-app.use(bodyParce.json());
-app.use(bodyParce.json({type: 'application/vnd.api+json'}));
+const database = require('./config/db.config');
+const mongoose = require('mongoose');
+//
+mogoose.Promise = global.Promise;
+
+// ==>conexão da base de dados
+mongoose.connect(database.local.localDatabaseURL, {userNewUrlParser : true, userUnifiedTopology: true, userCreateIndexx: true })
+            .then(()=>{console.log('A Base de dados foi cconectada com sucesso')})
+            .catch((erro) => {console.log(`Erro ao conectar com a Base de Dados`)})
+
+            
+
+app.use(express.urlencoded({extended: true}))
+app.use(express.json());
+app.use(express.json({type: 'application/vnd.api+json'}));
 app.use(morgan('dev'));
 app.use(cors());
 
