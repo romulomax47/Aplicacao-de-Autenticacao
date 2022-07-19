@@ -1,20 +1,26 @@
 const express = require('express')
+const app = express();
 const cors = require('cors')
 const mogoose =require('mongoose')
 const morgan = require('morgan')
 
-const app = express();
-const index = require('./routes/index')
 
 const database = require('./config/db.config');
 const mongoose = require('mongoose');
 //
 mogoose.Promise = global.Promise;
+// Rota da api
+const index = require('./routes/index')
+const  userRoutes = require('./routes/user.router')
 
-// ==>conexão da base de dados
-mongoose.connect(database.local.localDatabaseURL, {userNewUrlParser : true, userUnifiedTopology: true, userCreateIndexx: true })
-            .then(()=>{console.log('A Base de dados foi cconectada com sucesso')})
-            .catch((erro) => {console.log(`Erro ao conectar com a Base de Dados`)})
+// ==>conexão da base de dados:
+mongoose.connect(process.env.DB_URL)
+            .then(()=>{
+                console.log('A Base de dados foi cconectada com sucesso')
+            },(erro) => {
+                console.log(`Erro ao conectar com a Base de Dados... ${erro}`);
+                process.exit()
+            });
 
             
 
@@ -25,6 +31,7 @@ app.use(morgan('dev'));
 app.use(cors());
 
 app.use(index);
+app.use('/', userRoutes)
 
 
 module.exports = app

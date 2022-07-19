@@ -1,38 +1,36 @@
 
-const mongoose =require('mongoose');
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
-const  Schema = mongoose.Schema;
+const {Schema} = mongoose;
 
 const userSchema = new Schema({
-    name:{type: String, maxlength:50, required:true},
-    email:{type: String, maxlength:30, required:true},
+
+    name: { type: String, maxlength:50, required:true},
+    email: { type: String, maxlength:30, required:true},
     password:{type: String, required:true},
     tokens:[
         {
-            token:{ String, required:true }
-        }
-    ]  
-}, {
-    timestamps:true,
-    collection: "users",
+            token:{ type: String },
+        },
+    ],
 });
 
 
 
-userSchema.pre('save', async () => {
+userSchema.pre('save', async function(next){
     const user = this;
     if(user.isModified('password')){
         user.password = await bcrypt.hash(user.password, 8)
 
     }
     next();
-})
+});
 
-userSchema.methods.generateAuthToken = async ()=>{
+userSchema.methods.generateAuthToken = async function (){
     const user = this;
-    const token = jwt.sign({_id:user._id, name:user.name, email:user.email}, 'secret');
+    const token = jwt.sign({ _id: user._id, name: user.name, email: user.email}, 'secret');
     user.tokens = user.tokens.concat({token})
     await user.save();
     return token
