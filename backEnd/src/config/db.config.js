@@ -7,6 +7,5 @@ module.exports = {
     local: {
 
         localDatabaseURL: process.env.DB_URL,
-        secret:"password"
     }
 }

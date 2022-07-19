@@ -13,7 +13,7 @@ async function registerNewUser (req, res){
 
         const newUser = new User(req.body);
         const user = await newUser.save();
-        const token = await newUser.generateAuthToken(); // ==> Aqui model
+        await newUser.generateAuthToken(); // ==> Aqui model
         return res.status(201).json({messagen: "User create success fully!", user})
         
     } catch (error) {
@@ -38,4 +38,8 @@ async function loginUser (req, res){
     }
 }
 
-module.exports = {registerNewUser, loginUser}
+async function returnUserProfile(req, res){
+    await res.json(req.userData)
+}
+
+module.exports = {registerNewUser, loginUser, returnUserProfile}
