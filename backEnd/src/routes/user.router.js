@@ -8,3 +8,5 @@ router.post('/register', registerNewUser);
 
 module.exports = router;
 
+router.post('/login', loginUser )
+
