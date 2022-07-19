@@ -21,4 +21,21 @@ async function registerNewUser (req, res){
     }
 }
 
-module.exports = {registerNewUser}
+async function loginUser (req, res){
+    try {
+        const email = req.body.email;
+        const password = req.body.password;
+
+        const user = await User.findByCredentials(email,password)
+        if(!user){
+            return res.status(401).json({error:"Erro ao realizar o login! Verifique as suas credenciais!"})
+        }
+        await user.generateAuthToken()
+        res.status(201).json({message:"Usuário(a) logadi com sucessso!", user})
+
+    } catch (error) {
+        res.status(400).json({error:"usuario ou senha invalida"})
+    }
+}
+
+module.exports = {registerNewUser, loginUser}
